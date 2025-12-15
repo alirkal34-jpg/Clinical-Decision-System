@@ -4,60 +4,63 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+import os
 
 # ---------------------------------------------------------
 # SAYFA AYARLARI
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="Clinical Decision System",
+    page_title="Klinik Karar Destek Sistemi",
     page_icon="❤️",
     layout="wide"
 )
 
-st.title("🏥  Clinical Decision System")
-st.markdown(" Hybrid analysis system .")
-
-
+st.title("🏥 Clinical Decision System")
+st.markdown("Yapay Zeka ve Tıbbi Kuralların birleşimiyle çalışan hibrit risk analiz sistemi Hybrid analysis system.")
 
 @st.cache_resource
 def train_and_get_stats():
+    # Dosya okuma işlemi: Hem local hem cloud uyumlu olması için düzenlendi
+    # Eğer dosya GitHub'da app.py ile aynı klasördeyse direkt ismini yazarız.
+    file_path = "cardio_train.csv" 
+    
+    # Eğer bilgisayarındaki local yol hala lazımsa, onu da alternatif olarak ekliyorum:
+    local_path = "archive/cardio_train.csv"
 
-    try:
-        df = pd.read_csv("cardio_train.csv", sep=';')
-    except FileNotFoundError:
-        st.error("error,cannot find the data file.")
+    if os.path.exists(file_path):
+        df = pd.read_csv(file_path, sep=';')
+    elif os.path.exists(local_path):
+        df = pd.read_csv(local_path, sep=';')
+    else:
+        st.error("Hata: Veri seti bulunamadı. Lütfen 'cardio_train.csv' dosyasını GitHub reponuza yüklediğinizden emin olun.")
         st.stop()
-
 
     df.drop('id', axis=1, inplace=True)
     df['age'] = (df['age'] / 365).round().astype('int')
     df = df[(df['ap_hi'] > 50) & (df['ap_hi'] < 250)]
     df = df[(df['ap_lo'] > 30) & (df['ap_lo'] < 150)]
 
-
     df['bmi'] = df['weight'] / (df['height'] / 100) ** 2
-
 
     X = df.drop('cardio', axis=1)
     y = df['cardio']
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-
     model = RandomForestClassifier(n_estimators=50, random_state=42)
     model.fit(X_train, y_train)
-
 
     y_pred = model.predict(X_test)
     acc = accuracy_score(y_test, y_pred)
 
-
+    # --- HATA DÜZELTİLDİ: Boşluk hatası giderildi ---
     importance_df = pd.DataFrame({
         'Feature': X.columns,
         'Effect (importance Degree)': model.feature_importances_
-    }).sort_values(by='Effect  (importance Degree)', ascending=False)
+    }).sort_values(by='Effect (importance Degree)', ascending=False)
+    # -----------------------------------------------
 
-   
+    # İstatistikleri bir sözlük olarak döndür
     return {
         'model': model,
         'accuracy': acc,
@@ -65,15 +68,11 @@ def train_and_get_stats():
         'feature_importance': importance_df
     }
 
-
-
 with st.spinner('Training the model and calculating the statistics...'):
     stats = train_and_get_stats()
     model = stats['model']
 
-
 tab1, tab2 = st.tabs(["🏥 RİSK Analysis (Doctor Screen)", "🧠 MODEL DETAILS & TRAINING"])
-
 
 with tab1:
     col_input, col_result = st.columns([1, 1.5])
@@ -106,7 +105,7 @@ with tab1:
 
         bmi = weight / ((height / 100) ** 2)
 
-       
+        # DataFrame Hazırlığı
         input_data = {
             'age': age, 'gender': gender_val, 'height': height, 'weight': weight,
             'ap_hi': ap_hi, 'ap_lo': ap_lo, 'cholesterol': chol_map[cholesterol],
@@ -124,7 +123,6 @@ with tab1:
             base_prob = model.predict_proba(input_df)[0][1]
             risk_score = base_prob
             reasons = []
-
 
             if input_df['smoke'][0] == 1:
                 risk_score += 0.10
@@ -158,11 +156,9 @@ with tab1:
                     for r in reasons: st.write(f"- {r}")
                 st.write("👉 **Suggestion: Routine check-up.")
 
-
 with tab2:
-    st.header("🧠  Technical Details of AI")
+    st.header("🧠 Technical Details of AI")
     st.markdown("In this tab, you can see the statistics behind the decision-making system..")
-
 
     col1, col2, col3 = st.columns(3)
 
@@ -180,18 +176,15 @@ with tab2:
 
     st.divider()
 
-
     st.subheader("📊 How much weight does AI give to specific features when making a decision?")
     st.markdown(
         "The following graph illustrates the feature importance for the model's prediction of whether a patient is 'Sick' or 'Healthy'.")
 
-
     chart_data = stats['feature_importance'].set_index('Feature')
-
 
     en_map = {
         'age': 'Age', 'ap_hi': 'high blood pressure', 'weight': 'Weight',
-        'bmi': 'Body Mass index', 'height': 'Boy', 'ap_lo': 'Low blood pressure',
+        'bmi': 'Vücut Kitle İndeksi', 'height': 'Boy', 'ap_lo': 'Low blood pressure',
         'cholesterol': 'Cholosterol', 'gluc': 'Glucose', 'gender': 'Gender',
         'active': 'Active', 'smoke': 'Smoke', 'alco': 'Alcohol'
     }
