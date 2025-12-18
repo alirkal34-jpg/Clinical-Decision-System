@@ -1,9 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-# ---------------------------------------------------------
-# PAGE CONFIGURATION
-# ---------------------------------------------------------
+
 st.set_page_config(
     page_title="Cardio AI - Clinical Decision Support",
     page_icon="🫀",
@@ -11,9 +9,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ---------------------------------------------------------
-# CUSTOM CSS
-# ---------------------------------------------------------
+
 st.markdown("""
     <style>
     .stApp {
@@ -67,9 +63,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ---------------------------------------------------------
-# IMPROVED RISK CALCULATION FUNCTION
-# ---------------------------------------------------------
+
 def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastolic, 
                                   cholesterol, glucose, smoke, alcohol, active):
     """
@@ -79,7 +73,7 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
     risk_score = 0.0
     reasons = []
     
-    # Age factor (strongest predictor)
+    
     if age > 60:
         risk_score += 0.25
         reasons.append("Age >60 (+25%)")
@@ -90,7 +84,7 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
         risk_score += 0.08
         reasons.append("Age >40 (+8%)")
     
-    # Blood pressure (critical factor)
+    
     if systolic >= 140 or diastolic >= 90:
         risk_score += 0.22
         reasons.append("Hypertension Stage 2 (+22%)")
@@ -101,7 +95,7 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
         risk_score += 0.05
         reasons.append("Prehypertension (+5%)")
     
-    # BMI factor
+   
     if bmi >= 30:
         risk_score += 0.15
         reasons.append("Obesity BMI ≥30 (+15%)")
@@ -109,7 +103,7 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
         risk_score += 0.08
         reasons.append("Overweight BMI ≥25 (+8%)")
     
-    # Cholesterol (significant metabolic factor)
+    
     if cholesterol == 'Very High':
         risk_score += 0.18
         reasons.append("Very High Cholesterol (+18%)")
@@ -117,7 +111,7 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
         risk_score += 0.10
         reasons.append("Above Normal Cholesterol (+10%)")
     
-    # Glucose (diabetes risk)
+    
     if glucose == 'Very High':
         risk_score += 0.16
         reasons.append("Very High Glucose (+16%)")
@@ -125,28 +119,28 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
         risk_score += 0.09
         reasons.append("Above Normal Glucose (+9%)")
     
-    # LIFESTYLE FACTORS - Properly weighted!
+  
     if smoke:
-        risk_score += 0.20  # Smoking is a MAJOR risk factor
+        risk_score += 0.20  
         reasons.append("⚠️ Smoking (+20%)")
     
     if alcohol:
-        risk_score += 0.10  # Excessive alcohol significantly increases risk
+        risk_score += 0.10  
         reasons.append("⚠️ Alcohol Use (+10%)")
     
     if not active:
-        risk_score += 0.12  # Sedentary lifestyle is dangerous
+        risk_score += 0.12 
         reasons.append("⚠️ Physical Inactivity (+12%)")
     
-    # Gender factor
+    
     if gender == 'Male':
         risk_score += 0.05
         reasons.append("Male Gender (+5%)")
     
-    # Cap the score between 1% and 99%
+   
     risk_score = min(max(risk_score, 0.01), 0.99)
     
-    # Determine risk level
+  
     if risk_score > 0.60:
         risk_level = 'CRITICAL'
         risk_color = 'red'
@@ -169,9 +163,7 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
         'risk_color': risk_color
     }
 
-# ---------------------------------------------------------
-# SIDEBAR - PATIENT DATA ENTRY
-# ---------------------------------------------------------
+
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/2966/2966486.png", width=70)
     st.title("Patient Data")
@@ -207,16 +199,14 @@ with st.sidebar:
     st.markdown("<br>", unsafe_allow_html=True)
     calculate_btn = st.button('🚀 START ANALYSIS', type="primary", use_container_width=True)
 
-# ---------------------------------------------------------
-# MAIN DASHBOARD
-# ---------------------------------------------------------
+
 st.title("🥼 Clinical Decision Support System")
 st.markdown("**AI Engine Status:** ✅ Online (Improved Risk Model)")
 
-# Calculate BMI for display
+
 bmi = weight / ((height / 100) ** 2)
 
-# Metric cards
+
 col_k1, col_k2, col_k3, col_k4 = st.columns(4)
 with col_k1:
     st.metric(label="BMI Score", value=f"{bmi:.1f}")
@@ -230,7 +220,7 @@ with col_k4:
 
 st.divider()
 
-# Main analysis section
+
 if calculate_btn:
     with st.spinner("Processing clinical data..."):
         result = calculate_cardiovascular_risk(
@@ -238,7 +228,7 @@ if calculate_btn:
             cholesterol, glucose, smoke, alcohol, active
         )
     
-    # Create gauge chart
+  
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=result['percentage'],
@@ -274,7 +264,7 @@ if calculate_btn:
         margin=dict(l=20, r=20, t=80, b=20)
     )
     
-    # Display results in two columns
+    
     res_col1, res_col2 = st.columns([1.2, 1])
     
     with res_col1:
@@ -329,7 +319,7 @@ if calculate_btn:
             </div>
             """, unsafe_allow_html=True)
         
-        # Display risk contributors
+        
         if result['reasons']:
             st.markdown("---")
             st.markdown("**🔍 Risk Contributors:**")
@@ -339,9 +329,7 @@ if calculate_btn:
 else:
     st.info("👈 Please enter patient data in the sidebar and click 'START ANALYSIS'.")
 
-# ---------------------------------------------------------
-# TECHNICAL DETAILS TAB
-# ---------------------------------------------------------
+
 st.markdown("---")
 with st.expander("🧠 Technical Details & Risk Model Information"):
     st.markdown("""
@@ -381,3 +369,4 @@ with st.expander("🧠 Technical Details & Risk Model Information"):
     
     st.markdown("---")
     st.markdown("**Note:** This tool is for educational purposes. Always consult healthcare professionals for medical decisions.")
+
