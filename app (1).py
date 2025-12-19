@@ -16,7 +16,6 @@ st.markdown("""
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     }
     
-    /* Metric containers */
     div[data-testid="metric-container"] {
         background-color: #ffffff;
         border: 1px solid #d0d0d0;
@@ -35,18 +34,15 @@ st.markdown("""
         font-weight: 700;
     }
     
-    /* Sidebar styling */
     section[data-testid="stSidebar"] {
         background-color: #1e293b;
         border-right: 1px solid #334155;
     }
     
-    /* Headers */
     h1, h2, h3 {
         color: #ffffff;
     }
     
-    /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 10px;
     }
@@ -66,13 +62,9 @@ st.markdown("""
 
 def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastolic, 
                                   cholesterol, glucose, smoke, alcohol, active):
-    """
-    Calculates cardiovascular risk with proper weighting for lifestyle factors
-    """
     bmi = weight / ((height / 100) ** 2)
     risk_score = 0.0
     reasons = []
-    
     
     if age > 60:
         risk_score += 0.25
@@ -84,25 +76,56 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
         risk_score += 0.08
         reasons.append("Age >40 (+8%)")
     
+    systolic_risk = 0
+    diastolic_risk = 0
     
-    if systolic >= 140 or diastolic >= 90:
-        risk_score += 0.22
-        reasons.append("Hypertension Stage 2 (+22%)")
-    elif systolic >= 130 or diastolic >= 85:
-        risk_score += 0.12
-        reasons.append("Elevated BP (+12%)")
-    elif systolic >= 120 or diastolic >= 80:
-        risk_score += 0.05
-        reasons.append("Prehypertension (+5%)")
+    if systolic >= 180:
+        systolic_risk = 0.30
+        reasons.append("⚠️ Critical Systolic BP ≥180 (+30%)")
+    elif systolic >= 160:
+        systolic_risk = 0.25
+        reasons.append("Severe Systolic BP ≥160 (+25%)")
+    elif systolic >= 140:
+        systolic_risk = 0.18
+        reasons.append("Stage 2 Systolic BP ≥140 (+18%)")
+    elif systolic >= 130:
+        systolic_risk = 0.10
+        reasons.append("Stage 1 Systolic BP ≥130 (+10%)")
+    elif systolic >= 120:
+        systolic_risk = 0.05
+        reasons.append("Elevated Systolic BP ≥120 (+5%)")
     
-   
-    if bmi >= 30:
+    if diastolic >= 110:
+        diastolic_risk = 0.28
+        reasons.append("⚠️ Critical Diastolic BP ≥110 (+28%)")
+    elif diastolic >= 100:
+        diastolic_risk = 0.22
+        reasons.append("Severe Diastolic BP ≥100 (+22%)")
+    elif diastolic >= 90:
+        diastolic_risk = 0.16
+        reasons.append("Stage 2 Diastolic BP ≥90 (+16%)")
+    elif diastolic >= 85:
+        diastolic_risk = 0.09
+        reasons.append("Stage 1 Diastolic BP ≥85 (+9%)")
+    elif diastolic >= 80:
+        diastolic_risk = 0.04
+        reasons.append("Elevated Diastolic BP ≥80 (+4%)")
+    
+    risk_score += systolic_risk + diastolic_risk
+    
+    if systolic_risk >= 0.18 and diastolic_risk >= 0.16:
+        risk_score += 0.10
+        reasons.append("⚠️ Both BP Values Critical (+10%)")
+    
+    if bmi >= 35:
+        risk_score += 0.20
+        reasons.append("Severe Obesity BMI ≥35 (+20%)")
+    elif bmi >= 30:
         risk_score += 0.15
         reasons.append("Obesity BMI ≥30 (+15%)")
     elif bmi >= 25:
         risk_score += 0.08
         reasons.append("Overweight BMI ≥25 (+8%)")
-    
     
     if cholesterol == 'Very High':
         risk_score += 0.18
@@ -111,7 +134,6 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
         risk_score += 0.10
         reasons.append("Above Normal Cholesterol (+10%)")
     
-    
     if glucose == 'Very High':
         risk_score += 0.16
         reasons.append("Very High Glucose (+16%)")
@@ -119,35 +141,34 @@ def calculate_cardiovascular_risk(age, gender, height, weight, systolic, diastol
         risk_score += 0.09
         reasons.append("Above Normal Glucose (+9%)")
     
-  
     if smoke:
-        risk_score += 0.20  
+        risk_score += 0.20
         reasons.append("⚠️ Smoking (+20%)")
     
     if alcohol:
-        risk_score += 0.10  
+        risk_score += 0.10
         reasons.append("⚠️ Alcohol Use (+10%)")
     
     if not active:
-        risk_score += 0.12 
+        risk_score += 0.12
         reasons.append("⚠️ Physical Inactivity (+12%)")
-    
     
     if gender == 'Male':
         risk_score += 0.05
         reasons.append("Male Gender (+5%)")
     
-   
     risk_score = min(max(risk_score, 0.01), 0.99)
     
-  
-    if risk_score > 0.60:
+    if risk_score > 0.70:
         risk_level = 'CRITICAL'
+        risk_color = 'darkred'
+    elif risk_score > 0.50:
+        risk_level = 'SEVERE'
         risk_color = 'red'
-    elif risk_score > 0.40:
+    elif risk_score > 0.35:
         risk_level = 'HIGH'
         risk_color = 'orange'
-    elif risk_score > 0.25:
+    elif risk_score > 0.20:
         risk_level = 'MODERATE'
         risk_color = 'yellow'
     else:
@@ -201,7 +222,7 @@ with st.sidebar:
 
 
 st.title("🥼 Clinical Decision Support System")
-st.markdown("**AI Engine Status:** ✅ Online (Improved Risk Model)")
+st.markdown("**AI Engine Status:** ✅ Online (Enhanced Risk Model v2)")
 
 
 bmi = weight / ((height / 100) ** 2)
@@ -228,7 +249,6 @@ if calculate_btn:
             cholesterol, glucose, smoke, alcohol, active
         )
     
-  
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=result['percentage'],
@@ -242,11 +262,11 @@ if calculate_btn:
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
-                {'range': [0, 25], 'color': '#1b4332'},    # Dark Green
-                {'range': [25, 40], 'color': '#52b788'},   # Light Green
-                {'range': [40, 60], 'color': '#fbbf24'},   # Yellow
-                {'range': [60, 75], 'color': '#f97316'},   # Orange
-                {'range': [75, 100], 'color': '#dc2626'}   # Red
+                {'range': [0, 20], 'color': '#1b4332'},
+                {'range': [20, 35], 'color': '#52b788'},
+                {'range': [35, 50], 'color': '#fbbf24'},
+                {'range': [50, 70], 'color': '#f97316'},
+                {'range': [70, 100], 'color': '#dc2626'}
             ],
             'threshold': {
                 'line': {'color': "white", 'width': 4},
@@ -264,7 +284,6 @@ if calculate_btn:
         margin=dict(l=20, r=20, t=80, b=20)
     )
     
-    
     res_col1, res_col2 = st.columns([1.2, 1])
     
     with res_col1:
@@ -273,19 +292,49 @@ if calculate_btn:
     with res_col2:
         st.subheader("Analysis Conclusion")
         
-        if result['risk_level'] in ['CRITICAL', 'HIGH']:
-            st.error(f"🔴 **{result['risk_level']} RISK DETECTED**")
+        if result['risk_level'] == 'CRITICAL':
+            st.error(f"🔴 **{result['risk_level']} RISK - EMERGENCY**")
             st.markdown(f"""
             <div style='background-color: #3b1e1e; padding: 20px; border-radius: 10px; 
                         border-left: 4px solid #dc2626; color: #ffcccc;'>
                 <p style='margin: 0 0 15px 0;'>
-                    The patient shows strong indicators of cardiovascular disease.
+                    Patient requires immediate medical attention.
+                </p>
+                <p style='margin: 10px 0 5px 0; font-weight: bold;'>Immediate Action Required:</p>
+                <p style='margin: 5px 0;'>• Emergency Cardiology Consultation</p>
+                <p style='margin: 5px 0;'>• Hospitalization May Be Required</p>
+                <p style='margin: 5px 0;'>• Full Cardiac Workup</p>
+                <p style='margin: 5px 0;'>• Immediate Medication Initiation</p>
+            </div>
+            """, unsafe_allow_html=True)
+        elif result['risk_level'] == 'SEVERE':
+            st.error(f"🔴 **{result['risk_level']} RISK - URGENT**")
+            st.markdown(f"""
+            <div style='background-color: #3b1e1e; padding: 20px; border-radius: 10px; 
+                        border-left: 4px solid #ef4444; color: #ffcccc;'>
+                <p style='margin: 0 0 15px 0;'>
+                    Patient has multiple critical risk factors.
+                </p>
+                <p style='margin: 10px 0 5px 0; font-weight: bold;'>Urgent Action Required:</p>
+                <p style='margin: 5px 0;'>• Cardiology Referral Within 48 Hours</p>
+                <p style='margin: 5px 0;'>• Comprehensive Blood Work</p>
+                <p style='margin: 5px 0;'>• ECG and Stress Test</p>
+                <p style='margin: 5px 0;'>• Aggressive Lifestyle Changes</p>
+            </div>
+            """, unsafe_allow_html=True)
+        elif result['risk_level'] == 'HIGH':
+            st.warning(f"🟠 **{result['risk_level']} RISK**")
+            st.markdown(f"""
+            <div style='background-color: #3b2e1e; padding: 20px; border-radius: 10px; 
+                        border-left: 4px solid #f97316; color: #fde68a;'>
+                <p style='margin: 0 0 15px 0;'>
+                    Patient shows significant cardiovascular risk indicators.
                 </p>
                 <p style='margin: 10px 0 5px 0; font-weight: bold;'>Recommended Action:</p>
-                <p style='margin: 5px 0;'>• Urgent Cardiology Referral</p>
+                <p style='margin: 5px 0;'>• Cardiology Consultation Advised</p>
                 <p style='margin: 5px 0;'>• Full Blood Panel Required</p>
-                <p style='margin: 5px 0;'>• Immediate Lifestyle Intervention</p>
-                <p style='margin: 5px 0;'>• Consider Medication Review</p>
+                <p style='margin: 5px 0;'>• Lifestyle Modification Program</p>
+                <p style='margin: 5px 0;'>• Monthly Follow-up</p>
             </div>
             """, unsafe_allow_html=True)
         elif result['risk_level'] == 'MODERATE':
@@ -294,7 +343,7 @@ if calculate_btn:
             <div style='background-color: #3b2e1e; padding: 20px; border-radius: 10px; 
                         border-left: 4px solid #fbbf24; color: #fde68a;'>
                 <p style='margin: 0 0 15px 0;'>
-                    The patient has some risk factors that should be addressed.
+                    Patient has some risk factors that should be addressed.
                 </p>
                 <p style='margin: 10px 0 5px 0; font-weight: bold;'>Recommended Action:</p>
                 <p style='margin: 5px 0;'>• Follow-up in 3-6 months</p>
@@ -309,7 +358,7 @@ if calculate_btn:
             <div style='background-color: #1e3b26; padding: 20px; border-radius: 10px; 
                         border-left: 4px solid #22c55e; color: #ccffdd;'>
                 <p style='margin: 0 0 15px 0;'>
-                    The patient's values are within the manageable range.
+                    Patient's values are within healthy range.
                 </p>
                 <p style='margin: 10px 0 5px 0; font-weight: bold;'>Recommended Action:</p>
                 <p style='margin: 5px 0;'>• Routine Annual Check-up</p>
@@ -318,7 +367,6 @@ if calculate_btn:
                 <p style='margin: 5px 0;'>• Continue Healthy Habits</p>
             </div>
             """, unsafe_allow_html=True)
-        
         
         if result['reasons']:
             st.markdown("---")
@@ -333,40 +381,51 @@ else:
 st.markdown("---")
 with st.expander("🧠 Technical Details & Risk Model Information"):
     st.markdown("""
-    ### Improved Risk Calculation Model
+    ### Enhanced Risk Calculation Model v2
     
-    This version uses evidence-based risk weighting:
+    **Blood Pressure Risk (Separate Assessment):**
     
-    **Major Risk Factors:**
-    - 🚬 **Smoking**: +20% (Leading preventable cause)
-    - 🩸 **Hypertension (Stage 2)**: +22% (BP ≥140/90)
-    - 👴 **Age >60**: +25% (Natural aging effect)
+    Systolic:
+    - ≥180: +30% (Critical)
+    - ≥160: +25% (Severe)
+    - ≥140: +18% (Stage 2)
+    - ≥130: +10% (Stage 1)
+    - ≥120: +5% (Elevated)
     
-    **Significant Risk Factors:**
-    - 📊 **Very High Cholesterol**: +18%
-    - 🍬 **Very High Glucose**: +16%
-    - ⚖️ **Obesity (BMI ≥30)**: +15%
-    - 🍺 **Alcohol Use**: +10%
+    Diastolic:
+    - ≥110: +28% (Critical)
+    - ≥100: +22% (Severe)
+    - ≥90: +16% (Stage 2)
+    - ≥85: +9% (Stage 1)
+    - ≥80: +4% (Elevated)
     
-    **Moderate Risk Factors:**
-    - 🛋️ **Physical Inactivity**: +12%
-    - 📈 **Above Normal Cholesterol**: +10%
-    - 🍬 **Above Normal Glucose**: +9%
-    - ⚖️ **Overweight (BMI ≥25)**: +8%
+    **Combination Bonus:**
+    - Both systolic and diastolic in critical range: +10% additional
     
-    **Model Improvements:**
-    - ✅ Lifestyle factors (smoking, alcohol, exercise) now properly weighted
-    - ✅ Clinically accurate BP thresholds (140/90 for Stage 2)
-    - ✅ Cumulative risk calculation (factors add up realistically)
-    - ✅ Risk capped at 99% to avoid unrealistic predictions
+    **Other Major Risk Factors:**
+    - 🚬 Smoking: +20%
+    - 👴 Age >60: +25%
+    - ⚖️ Severe Obesity (BMI ≥35): +20%
+    - 📊 Very High Cholesterol: +18%
+    - � Very High Glucose: +16%
+    - ⚖️ Obesity (BMI ≥30): +15%
+    - 🛋️ Physical Inactivity: +12%
+    - � Alcohol Use: +10%
     
     **Risk Level Classification:**
-    - 🟢 **LOW**: 0-25% - Routine care recommended
-    - 🟡 **MODERATE**: 25-40% - Lifestyle changes needed
-    - 🟠 **HIGH**: 40-60% - Medical intervention advised
-    - 🔴 **CRITICAL**: 60%+ - Urgent cardiology referral
+    - 🟢 LOW: 0-20% - Routine care
+    - 🟡 MODERATE: 20-35% - Lifestyle changes
+    - 🟠 HIGH: 35-50% - Medical intervention
+    - 🔴 SEVERE: 50-70% - Urgent care
+    - 🔴 CRITICAL: 70%+ - Emergency attention
+    
+    **Model Improvements v2:**
+    - ✅ Separate systolic and diastolic assessment
+    - ✅ More granular BP risk levels
+    - ✅ Combination bonus for dual critical BP
+    - ✅ 5-level risk classification
+    - ✅ Higher weights for critical values
     """)
     
     st.markdown("---")
     st.markdown("**Note:** This tool is for educational purposes. Always consult healthcare professionals for medical decisions.")
-
