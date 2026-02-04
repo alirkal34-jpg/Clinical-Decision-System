@@ -80,19 +80,23 @@ This project solves dependency hell by fully **containerizing the application en
 ## 📸 Screenshots
 
 ### Low Risk Patient (17% - HEALTHY)
-![Low Risk Dashboard](https://github.com/alirkal34-jpg/Clinical-Decision-System/assets/screenshots/low-risk-dashboard.png)
+<img width="845" height="434" alt="Ekran görüntüsü 2026-02-04 194417" src="https://github.com/user-attachments/assets/31b9201f-a96b-43ae-a422-363e2cf5966e" />
+
 *Patient: Age 30, BMI 22.5, BP 132/79 - Normal cardiovascular health*
 
 ### High Risk Patient (67% - CRITICAL)
-![High Risk Dashboard](https://github.com/alirkal34-jpg/Clinical-Decision-System/assets/screenshots/high-risk-dashboard.png)
+<img width="709" height="363" alt="Ekran görüntüsü 2026-02-04 194441" src="https://github.com/user-attachments/assets/539b3601-d334-4a67-9a33-d1784c0169e7" />
+
 *Patient: Age 50, BMI 22.5, BP 218/79 - Elevated blood pressure indicating high risk*
 
 ### Clinical Risk Weights (ESC/AHA Guidelines)
-![Risk Weights Chart](https://github.com/alirkal34-jpg/Clinical-Decision-System/assets/screenshots/risk-weights-chart.png)
+<img width="707" height="393" alt="Ekran görüntüsü 2026-02-04 194452" src="https://github.com/user-attachments/assets/fae42020-0ac1-4128-8132-90e535149100" />
+
 *Evidence-based risk factor contributions based on clinical guidelines*
 
 ### Technical Risk Model Details
-![Risk Model Details](https://github.com/alirkal34-jpg/Clinical-Decision-System/assets/screenshots/risk-model-details.png)
+<img width="816" height="475" alt="Ekran görüntüsü 2026-02-04 195002" src="https://github.com/user-attachments/assets/a15b1bf3-d196-43e0-8007-7378bf127cbf" />
+
 *Advanced risk calculation model with weighted features and clinical thresholds*
 
 ---
