@@ -1,0 +1,124 @@
+# ============================================================================
+# Python
+# ============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.env.local
+
+# ============================================================================
+# Streamlit
+# ============================================================================
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# ============================================================================
+# Docker
+# ============================================================================
+# Docker volumes
+docker-compose.override.yml
+.docker/
+
+# ============================================================================
+# Data Files
+# ============================================================================
+# Large datasets (keep structure, ignore data)
+*.csv
+*.xlsx
+*.json
+*.parquet
+!cardio_train.csv
+*.h5
+*.hdf5
+
+# ============================================================================
+# Logs and databases
+# ============================================================================
+*.log
+*.sql
+*.sqlite
+*.db
+
+# ============================================================================
+# OS specific
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE_BIN/
+
+# Linux
+*~
+
+# ============================================================================
+# Testing
+# ============================================================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ============================================================================
+# Misc
+# ============================================================================
+*.swp
+*.swo
+.tmp/
+temp/
+tmp/
