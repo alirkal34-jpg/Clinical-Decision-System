@@ -80,13 +80,15 @@ This project solves dependency hell by fully **containerizing the application en
 ## 📸 Screenshots
 
 ### Low Risk Patient (17% - HEALTHY)
+<img width="1579" height="811" alt="image" src="https://github.com/user-attachments/assets/b93757a6-34fb-48a7-aac9-b922206de9a7" />
 
 
 
 *Patient: Age 30, BMI 22.5, BP 132/79 - Normal cardiovascular health*
 
 ### High Risk Patient (67% - CRITICAL)
-<img width="1578" height="812" alt="image" src="https://github.com/user-attachments/assets/90e5c231-9d55-4bd6-98fb-8d4a70b08ded" />
+<img width="1575" height="811" alt="image" src="https://github.com/user-attachments/assets/f2b98403-cb6f-45a9-8fbc-644fb0100413" />
+
 
 
 *Patient: Age 50, BMI 22.5, BP 218/79 - Elevated blood pressure indicating high risk*
@@ -99,6 +101,7 @@ This project solves dependency hell by fully **containerizing the application en
 
 ### Technical Risk Model Details
 
+<img width="1433" height="831" alt="image" src="https://github.com/user-attachments/assets/a7a867de-2b2a-4cb4-a0ad-f9f8d649435d" />
 
 *Advanced risk calculation model with weighted features and clinical thresholds*
 
